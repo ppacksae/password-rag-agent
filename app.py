@@ -185,10 +185,16 @@ st.markdown("""
         color: #7f8c8d !important;
     }
     
-    /* 빨간 밑줄 제거 */
+    /* 빨간 밑줄 및 테두리 제거 */
     [data-testid="stChatInput"] textarea:invalid {
         border-color: #e9ecef !important;
         box-shadow: none !important;
+    }
+    
+    /* 포커스 시 빨간 테두리 방지 */
+    [data-testid="stChatInput"] textarea:focus:invalid {
+        border-color: #3498db !important;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1) !important;
     }
     
     /* 채팅 입력창 위치 */
@@ -752,7 +758,7 @@ with chat_container:
                         word-wrap: break-word;
                         white-space: pre-wrap;
                     ">
-                        {clean_content}
+                        🤖 {clean_content}
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
@@ -880,29 +886,6 @@ if prompt := st.chat_input("AHN'S AI 에게 물어보기"):
         st.rerun()
     else:
         st.error("사이드바에서 API 키를 먼저 입력해주세요!")
-
-# 사용법 안내
-with st.expander("System Information"):
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("""
-        **Getting Started:**
-        1. Enter your Google Gemini API key in the sidebar
-        2. Upload documents using the file uploader
-        3. Click "Process Documents" to enable AI search
-        4. Ask questions about your documents in the chat
-        """)
-    
-    with col2:
-        st.markdown("""
-        **Features:**
-        - PDF, DOCX, TXT file support
-        - Multiple file upload capability
-        - Vector-based document search
-        - Professional AI responses
-        - Source document references
-        """)
 
 # 푸터
 st.markdown("---")
