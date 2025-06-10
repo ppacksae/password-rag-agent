@@ -7,6 +7,9 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
+import requests
+import tempfile
+import os
 
 # 페이지 설정
 st.set_page_config(
@@ -248,19 +251,6 @@ if 'encoder' not in st.session_state:
 if 'default_loaded' not in st.session_state:
     st.session_state.default_loaded = False
 
-# 세션 상태 초기화
-if 'messages' not in st.session_state:
-    st.session_state.messages = []
-
-if 'documents' not in st.session_state:
-    st.session_state.documents = []
-
-if 'embeddings' not in st.session_state:
-    st.session_state.embeddings = None
-
-if 'encoder' not in st.session_state:
-    st.session_state.encoder = None
-
 # 문서 처리 함수들
 def extract_text_from_pdf(file):
     """PDF에서 텍스트 추출"""
@@ -408,10 +398,61 @@ def search_documents(query, documents, embeddings, encoder, n_results=3):
         st.error(f"Document search error: {e}")
         return []
 
-def generate_response(query, context_docs, api_key):
-    """기본 문서 로드 (pstorm_pw.docx 시뮬레이션)"""
+def load_default_document():
+    """GitHub에서 기본 문서 로드 (pstorm_pw.docx)"""
     try:
-        # 기본 문서 내용 (실제 파일이 없으므로 시뮬레이션)
+        # GitHub raw 파일 URL
+        github_url = "https://raw.githubusercontent.com/ppacksae/password-rag-agent/main/pstorm_pw.docx"
+        
+        # 파일 다운로드
+        response = requests.get(github_url, timeout=10)
+        
+        if response.status_code == 200:
+            # 임시 파일로 저장
+            with tempfile.NamedTemporaryFile(delete=False, suffix='.docx') as tmp_file:
+                tmp_file.write(response.content)
+                tmp_file_path = tmp_file.name
+            
+            try:
+                # DOCX 파일 읽기
+                doc = Document(tmp_file_path)
+                content = ""
+                for paragraph in doc.paragraphs:
+                    content += paragraph.text + "\n"
+                
+                # 임시 파일 삭제
+                os.unlink(tmp_file_path)
+                
+                if not content.strip():
+                    raise Exception("문서가 비어있습니다")
+                
+            except Exception as e:
+                # 임시 파일 삭제 (오류 발생 시에도)
+                if os.path.exists(tmp_file_path):
+                    os.unlink(tmp_file_path)
+                raise e
+        else:
+            raise Exception(f"GitHub에서 파일을 가져올 수 없습니다. Status: {response.status_code}")
+        
+        # 텍스트를 청크로 분할
+        chunks = split_text_into_chunks(content, chunk_size=500)
+        
+        documents = []
+        for i, chunk in enumerate(chunks):
+            documents.append({
+                'id': f"pstorm_pw.docx_{i}",
+                'text': chunk,
+                'filename': "pstorm_pw.docx",
+                'chunk_id': i
+            })
+        
+        return documents
+    
+    except Exception as e:
+        st.error(f"GitHub에서 기본 문서 로드 중 오류: {e}")
+        st.info("기본 내용으로 대체합니다.")
+        
+        # 폴백 - 기본 내용 사용
         default_content = """
 6. 와이파이(WIFI)
 1) 비번(password) : Pstorm#2023
@@ -433,11 +474,9 @@ def generate_response(query, context_docs, api_key):
 - 게스트 비밀번호: guest2023
 - 포트 포워딩: 활성화
 - 방화벽: 기본 설정
-        """
+"""
         
-        # 텍스트를 청크로 분할
         chunks = split_text_into_chunks(default_content, chunk_size=500)
-        
         documents = []
         for i, chunk in enumerate(chunks):
             documents.append({
@@ -448,10 +487,8 @@ def generate_response(query, context_docs, api_key):
             })
         
         return documents
-    
-    except Exception as e:
-        st.error(f"기본 문서 로드 중 오류: {e}")
-        return []
+
+def generate_response(query, context_docs, api_key):
     """Gemini를 사용하여 응답 생성"""
     try:
         model = genai.GenerativeModel('gemini-1.5-flash')
