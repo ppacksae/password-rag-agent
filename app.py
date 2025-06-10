@@ -9,7 +9,7 @@ api_key = st.text_input("Google Gemini API 키를 입력하세요:", type="passw
 
 if api_key:
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-pro')
+    model = genai.GenerativeModel('gemini-1.5-flash')  # 수정된 부분!
     
     # 채팅 인터페이스
     user_input = st.text_input("질문을 입력하세요:")
