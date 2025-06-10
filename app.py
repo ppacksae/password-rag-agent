@@ -1,4 +1,4 @@
-pythonimport streamlit as st
+import streamlit as st
 
 st.title("🤖 AI 채팅 도우미")
 st.write("OpenAI를 활용한 간단한 채팅봇입니다!")
