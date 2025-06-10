@@ -16,207 +16,145 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 깔끔한 화이트 모드 CSS 스타일
+# Gemini 스타일 다크 배경 CSS
 st.markdown("""
 <style>
-    /* 메인 컨테이너 */
+    /* 전체 앱 다크 배경 (사이드바 제외) */
+    .main {
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+    }
+    
     .main .block-container {
+        background-color: #1a1a1a !important;
         padding-top: 2rem;
-        padding-bottom: 2rem;
-        max-width: 1200px;
+        padding-bottom: 120px !important;
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
+        max-width: none !important;
     }
     
-    /* 사이드바 스타일 */
+    /* 사이드바는 화이트 유지 */
     .css-1d391kg {
-        background-color: #f8f9fa;
-        border-right: 1px solid #e9ecef;
+        background-color: #f8f9fa !important;
+        border-right: 1px solid #e9ecef !important;
     }
     
-    /* 헤더 스타일 */
-    h1 {
-        color: #2c3e50;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-    }
-    
-    h2, h3 {
-        color: #34495e;
+    /* 메인 컨텐츠 헤더 스타일 */
+    .main h1, .main h2, .main h3 {
+        color: #ffffff !important;
         font-weight: 600;
     }
     
-    /* 기업용 부제목 */
-    .stMarkdown p {
-        color: #7f8c8d;
-        font-size: 1.1rem;
-        margin-bottom: 2rem;
+    /* 메인 영역 텍스트 */
+    .main p, .main span, .main div {
+        color: #ffffff !important;
     }
     
-    /* 버튼 스타일 */
-    .stButton > button {
-        background-color: #3498db;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        font-weight: 500;
-        padding: 0.6rem 1.2rem;
-        transition: all 0.2s ease;
-        box-shadow: 0 2px 4px rgba(52, 152, 219, 0.2);
-    }
-    
-    .stButton > button:hover {
-        background-color: #2980b9;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
-    }
-    
-    /* Primary 버튼 (Process Documents) */
-    .stButton > button[kind="primary"] {
-        background-color: #27ae60;
-        box-shadow: 0 2px 4px rgba(39, 174, 96, 0.2);
-    }
-    
-    .stButton > button[kind="primary"]:hover {
-        background-color: #229954;
-        box-shadow: 0 4px 8px rgba(39, 174, 96, 0.3);
-    }
-    
-    /* 입력 필드 스타일 */
-    .stTextInput > div > div > input {
-        border: 2px solid #e9ecef;
-        border-radius: 6px;
-        padding: 0.6rem;
-        transition: border-color 0.2s ease;
-    }
-    
-    .stTextInput > div > div > input:focus {
-        border-color: #3498db;
-        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-    }
-    
-    /* 파일 업로더 스타일 */
-    .stFileUploader {
-        border: 2px dashed #bdc3c7;
-        border-radius: 8px;
-        padding: 1.5rem;
-        background-color: #f8f9fa;
-        transition: all 0.2s ease;
-    }
-    
-    .stFileUploader:hover {
-        border-color: #3498db;
-        background-color: #ecf0f1;
-    }
-    
-    /* 메시지 스타일 */
-    .stSuccess {
-        background-color: #d4edda;
-        border: 1px solid #c3e6cb;
-        color: #155724;
-        border-radius: 6px;
-    }
-    
-    .stInfo {
-        background-color: #d1ecf1;
-        border: 1px solid #bee5eb;
-        color: #0c5460;
-        border-radius: 6px;
-    }
-    
-    .stWarning {
-        background-color: #fff3cd;
-        border: 1px solid #ffeaa7;
-        color: #856404;
-        border-radius: 6px;
-    }
-    
-    .stError {
-        background-color: #f8d7da;
-        border: 1px solid #f5c6cb;
-        color: #721c24;
-        border-radius: 6px;
-    }
-    
-    /* 채팅 메시지 스타일 */
-    .stChatMessage {
-        border-radius: 8px;
-        margin: 0.5rem 0;
-        border: 1px solid #e9ecef;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-    
-    /* 확장 가능한 섹션 */
-    .streamlit-expanderHeader {
-        background-color: #f8f9fa;
-        border: 1px solid #e9ecef;
-        border-radius: 6px;
-        font-weight: 500;
-    }
-    
-    .streamlit-expanderContent {
-        border: 1px solid #e9ecef;
-        border-top: none;
-        border-radius: 0 0 6px 6px;
-        background-color: #ffffff;
-    }
-    
-    /* 메트릭 컨테이너 */
-    [data-testid="metric-container"] {
-        background-color: #ffffff;
-        border: 1px solid #e9ecef;
-        border-radius: 6px;
-        padding: 1rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-    
-    /* 구분선 */
-    hr {
-        border-color: #e9ecef;
+    /* 구분선 스타일 */
+    .main hr {
+        border-color: #404040 !important;
         margin: 1.5rem 0;
     }
     
-    /* 채팅 입력창 */
+    /* 확장 섹션 다크 스타일 */
+    .main .streamlit-expanderHeader {
+        background-color: #2a2a2a !important;
+        color: #ffffff !important;
+        border: 1px solid #404040 !important;
+        border-radius: 6px !important;
+    }
+    
+    .main .streamlit-expanderContent {
+        background-color: #262626 !important;
+        border: 1px solid #404040 !important;
+        color: #ffffff !important;
+        border-radius: 0 0 6px 6px !important;
+    }
+    
+    /* 채팅 입력창 다크 스타일 */
+    [data-testid="stChatInput"] {
+        background-color: #1a1a1a !important;
+        border-top: 1px solid #404040 !important;
+    }
+    
     [data-testid="stChatInput"] textarea {
-        border: 2px solid #e9ecef;
-        border-radius: 6px;
-        transition: border-color 0.2s ease;
+        background-color: #2a2a2a !important;
+        color: #ffffff !important;
+        border: 2px solid #404040 !important;
+        border-radius: 25px !important;
+        padding: 12px 20px !important;
+        font-size: 1rem !important;
     }
     
     [data-testid="stChatInput"] textarea:focus {
-        border-color: #3498db;
-        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        border-color: #ffffff !important;
+        box-shadow: 0 0 0 1px #ffffff !important;
+        outline: none !important;
     }
     
-    /* 전체적인 텍스트 색상 */
-    .stMarkdown, p, span, div {
-        color: #2c3e50;
+    [data-testid="stChatInput"] textarea::placeholder {
+        color: #888888 !important;
     }
     
-    /* 링크 색상 */
-    a {
-        color: #3498db;
-        text-decoration: none;
+    /* 채팅 입력창 위치 조정 */
+    .stChatInput {
+        position: fixed;
+        bottom: 0;
+        left: 320px;
+        right: 0;
+        background-color: #1a1a1a !important;
+        border-top: 1px solid #404040 !important;
+        padding: 1rem 2rem !important;
+        z-index: 999;
     }
     
-    a:hover {
-        color: #2980b9;
-        text-decoration: underline;
+    /* 사이드바 축소시 */
+    .css-1lcbmhc.e1fqkh3o0 + .main .stChatInput {
+        left: 60px;
     }
     
-    /* 코드 블록 */
-    .stCode, code, pre {
-        background-color: #f8f9fa;
-        border: 1px solid #e9ecef;
-        border-radius: 4px;
+    /* 모바일 대응 */
+    @media (max-width: 768px) {
+        .stChatInput {
+            left: 0;
+            padding: 1rem;
+        }
+        
+        .main .block-container {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }
     }
     
-    /* 푸터 스타일 */
-    .footer {
-        text-align: center;
-        color: #7f8c8d;
-        font-size: 0.9rem;
-        margin-top: 2rem;
-        padding-top: 1rem;
-        border-top: 1px solid #e9ecef;
+    /* 스피너 색상 */
+    .main .stSpinner {
+        color: #ffffff !important;
+    }
+    
+    /* 에러/성공 메시지 스타일 */
+    .main .stError {
+        background-color: #4a1a1a !important;
+        border: 1px solid #6a2a2a !important;
+        color: #ffffff !important;
+    }
+    
+    .main .stSuccess {
+        background-color: #1a4a1a !important;
+        border: 1px solid #2a6a2a !important;
+        color: #ffffff !important;
+    }
+    
+    .main .stInfo {
+        background-color: #1a3a4a !important;
+        border: 1px solid #2a4a6a !important;
+        color: #ffffff !important;
+    }
+    
+    .main .stWarning {
+        background-color: #4a3a1a !important;
+        border: 1px solid #6a5a2a !important;
+        color: #ffffff !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -530,6 +468,36 @@ with st.sidebar:
             st.session_state.encoder = None
             st.rerun()
 
+# 사용법 안내를 사이드바로 이동
+with st.sidebar:
+    st.markdown("---")
+    st.subheader("System Information")
+    
+    with st.expander("Getting Started"):
+        st.markdown("""
+        1. Enter your Google Gemini API key above
+        2. Upload documents using the file uploader
+        3. Click "Process Documents" to enable AI search
+        4. Ask questions about your documents in the chat
+        """)
+    
+    with st.expander("Features"):
+        st.markdown("""
+        - PDF, DOCX, TXT file support
+        - Multiple file upload capability
+        - Vector-based document search
+        - Professional AI responses
+        - Source document references
+        """)
+    
+    with st.expander("Tips"):
+        st.markdown("""
+        - Use specific questions for better results
+        - Multiple files can be processed together
+        - First document processing may take time
+        - Referenced sources shown below responses
+        """)
+
 # 메인 채팅 인터페이스
 st.header("AI Chat Interface")
 
@@ -551,13 +519,13 @@ with chat_container:
             <h1 style="
                 font-size: 3rem;
                 font-weight: 300;
-                color: #2c3e50;
+                color: #ffffff;
                 margin-bottom: 2rem;
                 text-align: center;
             ">안녕하세요</h1>
             <p style="
                 font-size: 1.2rem;
-                color: #7f8c8d;
+                color: #cccccc;
                 text-align: center;
                 margin-bottom: 3rem;
             ">AHN'S AI Assistant가 도와드리겠습니다</p>
@@ -593,6 +561,9 @@ with chat_container:
                 """, unsafe_allow_html=True)
             else:
                 # AI 응답 - 좌측 정렬
+                # HTML 태그 제거하고 깔끔하게 표시
+                clean_content = message["content"].replace('<div>', '').replace('</div>', '').strip()
+                
                 st.markdown(f"""
                 <div style="
                     display: flex;
@@ -602,18 +573,19 @@ with chat_container:
                     padding-left: 1rem;
                 ">
                     <div style="
-                        background-color: #f5f5f5;
-                        color: #2c3e50;
+                        background-color: #2a2a2a;
+                        color: #ffffff;
                         padding: 0.8rem 1.2rem;
                         border-radius: 18px 18px 18px 4px;
                         max-width: 75%;
                         font-size: 0.95rem;
                         line-height: 1.5;
-                        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-                        border: 1px solid #e9ecef;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                        border: 1px solid #404040;
                         word-wrap: break-word;
+                        white-space: pre-wrap;
                     ">
-                        {message["content"]}
+                        {clean_content}
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
