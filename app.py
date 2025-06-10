@@ -31,9 +31,38 @@ st.markdown("""
         color: #fafafa;
     }
     
-    /* 사이드바 스타일 */
-    .css-1d391kg {
-        background-color: #262730;
+    /* 사이드바 완전 다크모드 */
+    .css-1d391kg, .css-1lcbmhc, .css-17eq0hr {
+        background-color: #1a1d23 !important;
+        color: #fafafa !important;
+    }
+    
+    /* 사이드바 모든 텍스트 흰색 */
+    .css-1d391kg * {
+        color: #fafafa !important;
+    }
+    
+    .css-1lcbmhc * {
+        color: #fafafa !important;
+    }
+    
+    /* 사이드바 헤더 스타일 */
+    .css-1d391kg h1, .css-1d391kg h2, .css-1d391kg h3 {
+        color: #ffffff !important;
+        font-weight: 600;
+    }
+    
+    /* 사이드바 구분선 */
+    .css-1d391kg hr {
+        border-color: #404040 !important;
+    }
+    
+    /* 사이드바 메트릭 스타일 */
+    .css-1d391kg .metric-container {
+        background-color: #262730 !important;
+        border: 1px solid #404040 !important;
+        border-radius: 6px;
+        padding: 0.5rem;
     }
     
     /* 채팅 메시지 스타일 */
@@ -44,70 +73,178 @@ st.markdown("""
         margin: 0.5rem 0;
     }
     
-    /* 입력 필드 스타일 */
+    /* 입력 필드 스타일 개선 */
     .stTextInput > div > div > input {
-        background-color: #262730;
-        color: #fafafa;
-        border: 1px solid #444;
+        background-color: #262730 !important;
+        color: #fafafa !important;
+        border: 1px solid #444 !important;
+        border-radius: 4px;
     }
     
-    /* 버튼 스타일 */
+    .stTextInput > div > div > input:focus {
+        border-color: #0066cc !important;
+        box-shadow: 0 0 0 1px #0066cc;
+    }
+    
+    /* 비밀번호 입력 필드 */
+    .stTextInput input[type="password"] {
+        background-color: #262730 !important;
+        color: #fafafa !important;
+        border: 1px solid #444 !important;
+    }
+    
+    /* 버튼 스타일 개선 */
     .stButton > button {
-        background-color: #0066cc;
-        color: white;
-        border: none;
-        border-radius: 4px;
+        background-color: #0066cc !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 6px !important;
         font-weight: 500;
+        padding: 0.5rem 1rem;
+        transition: all 0.2s ease;
     }
     
     .stButton > button:hover {
-        background-color: #0052a3;
+        background-color: #0052a3 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 102, 204, 0.3);
     }
     
-    /* 파일 업로더 스타일 */
+    /* Primary 버튼 스타일 */
+    .stButton > button[kind="primary"] {
+        background-color: #00cc66 !important;
+        color: white !important;
+    }
+    
+    .stButton > button[kind="primary"]:hover {
+        background-color: #00b359 !important;
+    }
+    
+    /* 파일 업로더 스타일 개선 */
     .stFileUploader {
-        background-color: #262730;
-        border: 2px dashed #444;
+        background-color: #262730 !important;
+        border: 2px dashed #666 !important;
         border-radius: 8px;
-        padding: 1rem;
+        padding: 1.5rem;
+        color: #fafafa !important;
+    }
+    
+    .stFileUploader:hover {
+        border-color: #0066cc !important;
+        background-color: #2a2d35 !important;
+    }
+    
+    .stFileUploader label {
+        color: #fafafa !important;
     }
     
     /* 헤더 스타일 */
-    h1, h2, h3 {
-        color: #fafafa;
+    h1, h2, h3, h4, h5, h6 {
+        color: #ffffff !important;
         font-weight: 600;
     }
     
-    /* 성공/정보 메시지 스타일 */
+    /* 일반 텍스트 */
+    p, span, div {
+        color: #fafafa;
+    }
+    
+    /* 성공/정보 메시지 스타일 개선 */
     .stSuccess {
-        background-color: #1a472a;
-        border: 1px solid #2d5a3d;
+        background-color: #1a472a !important;
+        border: 1px solid #2d5a3d !important;
+        color: #ffffff !important;
+        border-radius: 6px;
     }
     
     .stInfo {
-        background-color: #1a365d;
-        border: 1px solid #2d5a87;
+        background-color: #1a365d !important;
+        border: 1px solid #2d5a87 !important;
+        color: #ffffff !important;
+        border-radius: 6px;
     }
     
     .stWarning {
-        background-color: #744210;
-        border: 1px solid #975a16;
+        background-color: #744210 !important;
+        border: 1px solid #975a16 !important;
+        color: #ffffff !important;
+        border-radius: 6px;
     }
     
     .stError {
-        background-color: #742a2a;
-        border: 1px solid #9b2c2c;
+        background-color: #742a2a !important;
+        border: 1px solid #9b2c2c !important;
+        color: #ffffff !important;
+        border-radius: 6px;
     }
     
     /* 확장 가능한 섹션 스타일 */
     .streamlit-expanderHeader {
-        background-color: #262730;
-        color: #fafafa;
+        background-color: #262730 !important;
+        color: #ffffff !important;
+        border: 1px solid #404040 !important;
+        border-radius: 6px;
+    }
+    
+    .streamlit-expanderContent {
+        background-color: #1e1e1e !important;
+        border: 1px solid #404040 !important;
+        color: #fafafa !important;
     }
     
     /* 데이터프레임 스타일 */
     .stDataFrame {
-        background-color: #1e1e1e;
+        background-color: #1e1e1e !important;
+        color: #fafafa !important;
+    }
+    
+    /* 메트릭 컴포넌트 스타일 */
+    .metric-container {
+        background-color: #262730 !important;
+        border: 1px solid #404040 !important;
+        border-radius: 6px;
+        padding: 1rem;
+    }
+    
+    /* 스피너 스타일 */
+    .stSpinner {
+        color: #0066cc !important;
+    }
+    
+    /* 채팅 입력창 스타일 */
+    .stChatInputContainer {
+        background-color: #262730 !important;
+        border: 1px solid #404040 !important;
+    }
+    
+    .stChatInput > div > div > textarea {
+        background-color: #262730 !important;
+        color: #fafafa !important;
+        border: 1px solid #404040 !important;
+        border-radius: 6px;
+    }
+    
+    /* 사이드바 선택박스 및 기타 위젯 */
+    .stSelectbox > div > div {
+        background-color: #262730 !important;
+        color: #fafafa !important;
+        border: 1px solid #404040 !important;
+    }
+    
+    /* 링크 색상 */
+    a {
+        color: #66b3ff !important;
+    }
+    
+    a:hover {
+        color: #4da6ff !important;
+    }
+    
+    /* 코드 블록 스타일 */
+    .stCode {
+        background-color: #1e1e1e !important;
+        color: #fafafa !important;
+        border: 1px solid #404040 !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -116,99 +253,6 @@ st.markdown("""
 st.title("AHN's AI Assistant")
 st.markdown("**Enterprise Document Intelligence Platform**")
 st.markdown("---")
-
-# 사이드바 설정
-with st.sidebar:
-    st.header("Configuration")
-    
-    # API 키 입력
-    api_key = st.text_input("Google Gemini API Key:", type="password", help="Enter your API key to enable AI features")
-    
-    if api_key:
-        genai.configure(api_key=api_key)
-        st.success("API Connected")
-    else:
-        st.warning("API Key Required")
-    
-    st.markdown("---")
-    
-    # 문서 관리 섹션
-    st.header("Document Management")
-    
-    # 문서 업로드
-    st.subheader("Upload Documents")
-    uploaded_files = st.file_uploader(
-        "Supported formats: PDF, DOCX, TXT",
-        type=['pdf', 'docx', 'txt'],
-        accept_multiple_files=True,
-        help="Upload company documents for AI analysis"
-    )
-    
-    # 문서 처리 버튼
-    if uploaded_files:
-        if st.button("Process Documents", type="primary", use_container_width=True):
-            with st.spinner("Processing documents..."):
-                # 문서 처리 로직 (기존과 동일)
-                documents = process_documents(uploaded_files)
-                
-                if documents:
-                    st.session_state.documents = documents
-                    
-                    with st.spinner("Generating embeddings..."):
-                        embeddings, encoder = create_embeddings(documents)
-                        if embeddings is not None:
-                            st.session_state.embeddings = embeddings
-                            st.session_state.encoder = encoder
-                            st.success(f"Processed {len(documents)} document chunks")
-                        else:
-                            st.error("Embedding generation failed")
-                else:
-                    st.warning("No processable documents found")
-                
-                st.rerun()
-    
-    st.markdown("---")
-    
-    # 문서 현황
-    st.subheader("Document Status")
-    if st.session_state.get('documents'):
-        st.metric("Total Chunks", len(st.session_state.documents))
-        
-        # 파일별 청크 수 표시
-        file_counts = {}
-        for doc in st.session_state.documents:
-            filename = doc['filename']
-            file_counts[filename] = file_counts.get(filename, 0) + 1
-        
-        for filename, count in file_counts.items():
-            st.text(f"{filename}: {count} chunks")
-        
-        # 검색 기능 상태
-        if st.session_state.get('embeddings') is not None:
-            st.success("Search: Active")
-        else:
-            st.warning("Search: Inactive")
-    else:
-        st.info("No documents loaded")
-    
-    st.markdown("---")
-    
-    # 관리 기능
-    st.subheader("System Management")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        if st.button("Clear Chat", use_container_width=True):
-            st.session_state.messages = []
-            st.rerun()
-    
-    with col2:
-        if st.button("Clear Docs", use_container_width=True):
-            st.session_state.documents = []
-            st.session_state.embeddings = None
-            st.session_state.encoder = None
-            st.rerun()
 
 # 세션 상태 초기화
 if 'messages' not in st.session_state:
@@ -223,7 +267,20 @@ if 'embeddings' not in st.session_state:
 if 'encoder' not in st.session_state:
     st.session_state.encoder = None
 
-# 문서 처리 함수들 (기존과 동일)
+# 세션 상태 초기화
+if 'messages' not in st.session_state:
+    st.session_state.messages = []
+
+if 'documents' not in st.session_state:
+    st.session_state.documents = []
+
+if 'embeddings' not in st.session_state:
+    st.session_state.embeddings = None
+
+if 'encoder' not in st.session_state:
+    st.session_state.encoder = None
+
+# 문서 처리 함수들
 def extract_text_from_pdf(file):
     """PDF에서 텍스트 추출"""
     try:
@@ -407,6 +464,99 @@ Respond in Korean if the question is in Korean.
     
     except Exception as e:
         return f"Error generating response: {e}"
+
+# 사이드바 설정
+with st.sidebar:
+    st.header("Configuration")
+    
+    # API 키 입력
+    api_key = st.text_input("Google Gemini API Key:", type="password", help="Enter your API key to enable AI features")
+    
+    if api_key:
+        genai.configure(api_key=api_key)
+        st.success("API Connected")
+    else:
+        st.warning("API Key Required")
+    
+    st.markdown("---")
+    
+    # 문서 관리 섹션
+    st.header("Document Management")
+    
+    # 문서 업로드
+    st.subheader("Upload Documents")
+    uploaded_files = st.file_uploader(
+        "Supported formats: PDF, DOCX, TXT",
+        type=['pdf', 'docx', 'txt'],
+        accept_multiple_files=True,
+        help="Upload company documents for AI analysis"
+    )
+    
+    # 문서 처리 버튼
+    if uploaded_files:
+        if st.button("Process Documents", type="primary", use_container_width=True):
+            with st.spinner("Processing documents..."):
+                # 문서 처리 로직
+                documents = process_documents(uploaded_files)
+                
+                if documents:
+                    st.session_state.documents = documents
+                    
+                    with st.spinner("Generating embeddings..."):
+                        embeddings, encoder = create_embeddings(documents)
+                        if embeddings is not None:
+                            st.session_state.embeddings = embeddings
+                            st.session_state.encoder = encoder
+                            st.success(f"Processed {len(documents)} document chunks")
+                        else:
+                            st.error("Embedding generation failed")
+                else:
+                    st.warning("No processable documents found")
+                
+                st.rerun()
+    
+    st.markdown("---")
+    
+    # 문서 현황
+    st.subheader("Document Status")
+    if st.session_state.get('documents'):
+        st.metric("Total Chunks", len(st.session_state.documents))
+        
+        # 파일별 청크 수 표시
+        file_counts = {}
+        for doc in st.session_state.documents:
+            filename = doc['filename']
+            file_counts[filename] = file_counts.get(filename, 0) + 1
+        
+        for filename, count in file_counts.items():
+            st.text(f"{filename}: {count} chunks")
+        
+        # 검색 기능 상태
+        if st.session_state.get('embeddings') is not None:
+            st.success("Search: Active")
+        else:
+            st.warning("Search: Inactive")
+    else:
+        st.info("No documents loaded")
+    
+    st.markdown("---")
+    
+    # 관리 기능
+    st.subheader("System Management")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        if st.button("Clear Chat", use_container_width=True):
+            st.session_state.messages = []
+            st.rerun()
+    
+    with col2:
+        if st.button("Clear Docs", use_container_width=True):
+            st.session_state.documents = []
+            st.session_state.embeddings = None
+            st.session_state.encoder = None
+            st.rerun()
 
 # 메인 채팅 인터페이스
 st.header("AI Chat Interface")
