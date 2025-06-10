@@ -16,240 +16,207 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 다크모드 CSS 스타일
+# 깔끔한 화이트 모드 CSS 스타일
 st.markdown("""
 <style>
-    /* 강제 다크모드 - 모든 요소 */
-    * {
-        color: #fafafa !important;
-    }
-    
-    /* 메인 앱 배경 */
-    .stApp, .main, .block-container {
-        background-color: #0e1117 !important;
-        color: #fafafa !important;
-    }
-    
-    /* 사이드바 - 모든 가능한 클래스명 적용 */
-    .css-1d391kg, .css-1lcbmhc, .css-17eq0hr, .css-1544g2n, 
-    .css-18e3th9, .css-1outpf7, .css-k1vhr4, .css-1y4p8pa,
-    [data-testid="stSidebar"], [data-testid="stSidebarNav"],
-    .css-1aumxhk, .sidebar .sidebar-content {
-        background-color: #1a1d23 !important;
-        color: #fafafa !important;
-    }
-    
-    /* 사이드바 모든 하위 요소 강제 흰색 */
-    [data-testid="stSidebar"] *, 
-    [data-testid="stSidebar"] h1,
-    [data-testid="stSidebar"] h2, 
-    [data-testid="stSidebar"] h3,
-    [data-testid="stSidebar"] p,
-    [data-testid="stSidebar"] span,
-    [data-testid="stSidebar"] div,
-    [data-testid="stSidebar"] label,
-    .css-1d391kg *,
-    .css-1lcbmhc * {
-        color: #ffffff !important;
-        background-color: transparent !important;
-    }
-    
-    /* 메인 콘텐츠 영역 다크 */
+    /* 메인 컨테이너 */
     .main .block-container {
-        background-color: #0e1117 !important;
         padding-top: 2rem;
         padding-bottom: 2rem;
+        max-width: 1200px;
     }
     
-    /* 채팅 메시지 컨테이너 */
-    [data-testid="stChatMessageContainer"] {
-        background-color: #262730 !important;
-        border: 1px solid #404040 !important;
-        border-radius: 8px !important;
-        margin: 0.5rem 0 !important;
+    /* 사이드바 스타일 */
+    .css-1d391kg {
+        background-color: #f8f9fa;
+        border-right: 1px solid #e9ecef;
     }
     
-    /* 채팅 메시지 */
-    .stChatMessage {
-        background-color: #262730 !important;
-        border: 1px solid #404040 !important;
-        border-radius: 8px !important;
-        color: #fafafa !important;
+    /* 헤더 스타일 */
+    h1 {
+        color: #2c3e50;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
     }
     
-    /* 입력 필드들 */
-    .stTextInput > div > div > input,
-    .stTextInput input,
-    .stPasswordInput > div > div > input,
-    .stPasswordInput input,
-    [data-testid="stTextInput"] input {
-        background-color: #262730 !important;
-        color: #ffffff !important;
-        border: 1px solid #555 !important;
-        border-radius: 6px !important;
+    h2, h3 {
+        color: #34495e;
+        font-weight: 600;
     }
     
-    .stTextInput input:focus,
-    .stPasswordInput input:focus {
-        border-color: #0066cc !important;
-        box-shadow: 0 0 0 1px #0066cc !important;
+    /* 기업용 부제목 */
+    .stMarkdown p {
+        color: #7f8c8d;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
     }
     
-    /* 버튼들 */
+    /* 버튼 스타일 */
     .stButton > button {
-        background-color: #0066cc !important;
-        color: white !important;
-        border: none !important;
-        border-radius: 6px !important;
-        font-weight: 500 !important;
-        padding: 0.5rem 1rem !important;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 500;
+        padding: 0.6rem 1.2rem;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 4px rgba(52, 152, 219, 0.2);
     }
     
     .stButton > button:hover {
-        background-color: #0052a3 !important;
-        transform: translateY(-1px) !important;
-        box-shadow: 0 4px 8px rgba(0, 102, 204, 0.3) !important;
+        background-color: #2980b9;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
     }
     
-    /* Primary 버튼 */
+    /* Primary 버튼 (Process Documents) */
     .stButton > button[kind="primary"] {
-        background-color: #00cc66 !important;
+        background-color: #27ae60;
+        box-shadow: 0 2px 4px rgba(39, 174, 96, 0.2);
     }
     
     .stButton > button[kind="primary"]:hover {
-        background-color: #00b359 !important;
+        background-color: #229954;
+        box-shadow: 0 4px 8px rgba(39, 174, 96, 0.3);
     }
     
-    /* 파일 업로더 */
+    /* 입력 필드 스타일 */
+    .stTextInput > div > div > input {
+        border: 2px solid #e9ecef;
+        border-radius: 6px;
+        padding: 0.6rem;
+        transition: border-color 0.2s ease;
+    }
+    
+    .stTextInput > div > div > input:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    
+    /* 파일 업로더 스타일 */
     .stFileUploader {
-        background-color: #262730 !important;
-        border: 2px dashed #666 !important;
-        border-radius: 8px !important;
-        padding: 1.5rem !important;
+        border: 2px dashed #bdc3c7;
+        border-radius: 8px;
+        padding: 1.5rem;
+        background-color: #f8f9fa;
+        transition: all 0.2s ease;
     }
     
     .stFileUploader:hover {
-        border-color: #0066cc !important;
-        background-color: #2a2d35 !important;
+        border-color: #3498db;
+        background-color: #ecf0f1;
     }
     
-    .stFileUploader label,
-    .stFileUploader div,
-    .stFileUploader span {
-        color: #ffffff !important;
-    }
-    
-    /* 헤더들 */
-    h1, h2, h3, h4, h5, h6 {
-        color: #ffffff !important;
-        font-weight: 600 !important;
-    }
-    
-    /* 성공/경고/에러 메시지 */
+    /* 메시지 스타일 */
     .stSuccess {
-        background-color: #1a472a !important;
-        border: 1px solid #2d5a3d !important;
-        color: #ffffff !important;
-        border-radius: 6px !important;
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+        border-radius: 6px;
     }
     
     .stInfo {
-        background-color: #1a365d !important;
-        border: 1px solid #2d5a87 !important;
-        color: #ffffff !important;
-        border-radius: 6px !important;
+        background-color: #d1ecf1;
+        border: 1px solid #bee5eb;
+        color: #0c5460;
+        border-radius: 6px;
     }
     
     .stWarning {
-        background-color: #744210 !important;
-        border: 1px solid #975a16 !important;
-        color: #ffffff !important;
-        border-radius: 6px !important;
+        background-color: #fff3cd;
+        border: 1px solid #ffeaa7;
+        color: #856404;
+        border-radius: 6px;
     }
     
     .stError {
-        background-color: #742a2a !important;
-        border: 1px solid #9b2c2c !important;
-        color: #ffffff !important;
-        border-radius: 6px !important;
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+        border-radius: 6px;
+    }
+    
+    /* 채팅 메시지 스타일 */
+    .stChatMessage {
+        border-radius: 8px;
+        margin: 0.5rem 0;
+        border: 1px solid #e9ecef;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
     
     /* 확장 가능한 섹션 */
     .streamlit-expanderHeader {
-        background-color: #262730 !important;
-        color: #ffffff !important;
-        border: 1px solid #404040 !important;
-        border-radius: 6px !important;
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        font-weight: 500;
     }
     
     .streamlit-expanderContent {
-        background-color: #1e1e1e !important;
-        border: 1px solid #404040 !important;
-        color: #fafafa !important;
-        border-radius: 0 0 6px 6px !important;
+        border: 1px solid #e9ecef;
+        border-top: none;
+        border-radius: 0 0 6px 6px;
+        background-color: #ffffff;
     }
     
-    /* 메트릭 */
+    /* 메트릭 컨테이너 */
     [data-testid="metric-container"] {
-        background-color: #262730 !important;
-        border: 1px solid #404040 !important;
-        border-radius: 6px !important;
-        padding: 1rem !important;
-    }
-    
-    [data-testid="metric-container"] * {
-        color: #ffffff !important;
-    }
-    
-    /* 채팅 입력창 */
-    [data-testid="stChatInput"] textarea,
-    .stChatInput textarea {
-        background-color: #262730 !important;
-        color: #ffffff !important;
-        border: 1px solid #555 !important;
-        border-radius: 6px !important;
-    }
-    
-    /* 스피너 */
-    .stSpinner {
-        color: #0066cc !important;
+        background-color: #ffffff;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        padding: 1rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
     
     /* 구분선 */
     hr {
-        border-color: #404040 !important;
+        border-color: #e9ecef;
+        margin: 1.5rem 0;
     }
     
-    /* 일반 텍스트들 */
-    p, span, div, label {
-        color: #fafafa !important;
+    /* 채팅 입력창 */
+    [data-testid="stChatInput"] textarea {
+        border: 2px solid #e9ecef;
+        border-radius: 6px;
+        transition: border-color 0.2s ease;
     }
     
-    /* 링크 */
+    [data-testid="stChatInput"] textarea:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    
+    /* 전체적인 텍스트 색상 */
+    .stMarkdown, p, span, div {
+        color: #2c3e50;
+    }
+    
+    /* 링크 색상 */
     a {
-        color: #66b3ff !important;
+        color: #3498db;
+        text-decoration: none;
     }
     
     a:hover {
-        color: #4da6ff !important;
+        color: #2980b9;
+        text-decoration: underline;
     }
     
     /* 코드 블록 */
     .stCode, code, pre {
-        background-color: #1e1e1e !important;
-        color: #fafafa !important;
-        border: 1px solid #404040 !important;
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 4px;
     }
     
-    /* 데이터프레임 */
-    .stDataFrame, .dataframe {
-        background-color: #1e1e1e !important;
-        color: #fafafa !important;
-    }
-    
-    /* 도움말 텍스트 */
-    .stHelp, [data-testid="stTooltipHoverTarget"] {
-        color: #cccccc !important;
+    /* 푸터 스타일 */
+    .footer {
+        text-align: center;
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e9ecef;
     }
 </style>
 """, unsafe_allow_html=True)
