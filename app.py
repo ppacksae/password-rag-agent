@@ -10,35 +10,205 @@ import pandas as pd
 
 # 페이지 설정
 st.set_page_config(
-    page_title="🏢 AHN's AI 도우미",
-    page_icon="🤖",
-    layout="wide"
+    page_title="AHN's AI Assistant",
+    page_icon="💼",
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
-# 제목
-st.title("🏢 AHN's AI 도우미")
-st.write("문서를 업로드하고 AI와 대화하며 정보를 찾아보세요!")
+# 다크모드 CSS 스타일
+st.markdown("""
+<style>
+    /* 메인 컨테이너 */
+    .main .block-container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+    
+    /* 다크 테마 전체 적용 */
+    .stApp {
+        background-color: #0e1117;
+        color: #fafafa;
+    }
+    
+    /* 사이드바 스타일 */
+    .css-1d391kg {
+        background-color: #262730;
+    }
+    
+    /* 채팅 메시지 스타일 */
+    .stChatMessage {
+        background-color: #1e1e1e;
+        border: 1px solid #333;
+        border-radius: 8px;
+        margin: 0.5rem 0;
+    }
+    
+    /* 입력 필드 스타일 */
+    .stTextInput > div > div > input {
+        background-color: #262730;
+        color: #fafafa;
+        border: 1px solid #444;
+    }
+    
+    /* 버튼 스타일 */
+    .stButton > button {
+        background-color: #0066cc;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-weight: 500;
+    }
+    
+    .stButton > button:hover {
+        background-color: #0052a3;
+    }
+    
+    /* 파일 업로더 스타일 */
+    .stFileUploader {
+        background-color: #262730;
+        border: 2px dashed #444;
+        border-radius: 8px;
+        padding: 1rem;
+    }
+    
+    /* 헤더 스타일 */
+    h1, h2, h3 {
+        color: #fafafa;
+        font-weight: 600;
+    }
+    
+    /* 성공/정보 메시지 스타일 */
+    .stSuccess {
+        background-color: #1a472a;
+        border: 1px solid #2d5a3d;
+    }
+    
+    .stInfo {
+        background-color: #1a365d;
+        border: 1px solid #2d5a87;
+    }
+    
+    .stWarning {
+        background-color: #744210;
+        border: 1px solid #975a16;
+    }
+    
+    .stError {
+        background-color: #742a2a;
+        border: 1px solid #9b2c2c;
+    }
+    
+    /* 확장 가능한 섹션 스타일 */
+    .streamlit-expanderHeader {
+        background-color: #262730;
+        color: #fafafa;
+    }
+    
+    /* 데이터프레임 스타일 */
+    .stDataFrame {
+        background-color: #1e1e1e;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# 제목 및 헤더
+st.title("AHN's AI Assistant")
+st.markdown("**Enterprise Document Intelligence Platform**")
+st.markdown("---")
 
 # 사이드바 설정
 with st.sidebar:
-    st.header("⚙️ 설정")
+    st.header("Configuration")
     
     # API 키 입력
-    api_key = st.text_input("Google Gemini API 키:", type="password")
+    api_key = st.text_input("Google Gemini API Key:", type="password", help="Enter your API key to enable AI features")
     
     if api_key:
         genai.configure(api_key=api_key)
-        st.success("✅ API 키 설정 완료!")
+        st.success("API Connected")
+    else:
+        st.warning("API Key Required")
     
-    st.divider()
+    st.markdown("---")
+    
+    # 문서 관리 섹션
+    st.header("Document Management")
     
     # 문서 업로드
-    st.header("📄 문서 업로드")
+    st.subheader("Upload Documents")
     uploaded_files = st.file_uploader(
-        "PDF, DOCX, TXT 파일을 업로드하세요",
+        "Supported formats: PDF, DOCX, TXT",
         type=['pdf', 'docx', 'txt'],
-        accept_multiple_files=True
+        accept_multiple_files=True,
+        help="Upload company documents for AI analysis"
     )
+    
+    # 문서 처리 버튼
+    if uploaded_files:
+        if st.button("Process Documents", type="primary", use_container_width=True):
+            with st.spinner("Processing documents..."):
+                # 문서 처리 로직 (기존과 동일)
+                documents = process_documents(uploaded_files)
+                
+                if documents:
+                    st.session_state.documents = documents
+                    
+                    with st.spinner("Generating embeddings..."):
+                        embeddings, encoder = create_embeddings(documents)
+                        if embeddings is not None:
+                            st.session_state.embeddings = embeddings
+                            st.session_state.encoder = encoder
+                            st.success(f"Processed {len(documents)} document chunks")
+                        else:
+                            st.error("Embedding generation failed")
+                else:
+                    st.warning("No processable documents found")
+                
+                st.rerun()
+    
+    st.markdown("---")
+    
+    # 문서 현황
+    st.subheader("Document Status")
+    if st.session_state.get('documents'):
+        st.metric("Total Chunks", len(st.session_state.documents))
+        
+        # 파일별 청크 수 표시
+        file_counts = {}
+        for doc in st.session_state.documents:
+            filename = doc['filename']
+            file_counts[filename] = file_counts.get(filename, 0) + 1
+        
+        for filename, count in file_counts.items():
+            st.text(f"{filename}: {count} chunks")
+        
+        # 검색 기능 상태
+        if st.session_state.get('embeddings') is not None:
+            st.success("Search: Active")
+        else:
+            st.warning("Search: Inactive")
+    else:
+        st.info("No documents loaded")
+    
+    st.markdown("---")
+    
+    # 관리 기능
+    st.subheader("System Management")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        if st.button("Clear Chat", use_container_width=True):
+            st.session_state.messages = []
+            st.rerun()
+    
+    with col2:
+        if st.button("Clear Docs", use_container_width=True):
+            st.session_state.documents = []
+            st.session_state.embeddings = None
+            st.session_state.encoder = None
+            st.rerun()
 
 # 세션 상태 초기화
 if 'messages' not in st.session_state:
@@ -53,7 +223,7 @@ if 'embeddings' not in st.session_state:
 if 'encoder' not in st.session_state:
     st.session_state.encoder = None
 
-# 문서 처리 함수들
+# 문서 처리 함수들 (기존과 동일)
 def extract_text_from_pdf(file):
     """PDF에서 텍스트 추출"""
     try:
@@ -63,7 +233,7 @@ def extract_text_from_pdf(file):
             text += page.extract_text() + "\n"
         return text
     except Exception as e:
-        st.error(f"PDF 읽기 오류: {e}")
+        st.error(f"PDF reading error: {e}")
         return ""
 
 def extract_text_from_docx(file):
@@ -75,7 +245,7 @@ def extract_text_from_docx(file):
             text += paragraph.text + "\n"
         return text
     except Exception as e:
-        st.error(f"DOCX 읽기 오류: {e}")
+        st.error(f"DOCX reading error: {e}")
         return ""
 
 def extract_text_from_txt(file):
@@ -83,7 +253,7 @@ def extract_text_from_txt(file):
     try:
         return file.read().decode('utf-8')
     except Exception as e:
-        st.error(f"TXT 읽기 오류: {e}")
+        st.error(f"TXT reading error: {e}")
         return ""
 
 def split_text_into_chunks(text, chunk_size=500):
@@ -114,7 +284,7 @@ def split_text_into_chunks(text, chunk_size=500):
     if current_chunk:
         chunks.append('. '.join(current_chunk) + '.')
     
-    return [chunk for chunk in chunks if len(chunk.strip()) > 50]  # 너무 짧은 청크 제거
+    return [chunk for chunk in chunks if len(chunk.strip()) > 50]
 
 def process_documents(files):
     """업로드된 문서들 처리"""
@@ -122,7 +292,6 @@ def process_documents(files):
     
     for file in files:
         try:
-            # 파일 타입별 텍스트 추출
             if file.type == "application/pdf":
                 text = extract_text_from_pdf(file)
             elif file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
@@ -130,14 +299,13 @@ def process_documents(files):
             elif file.type == "text/plain":
                 text = extract_text_from_txt(file)
             else:
-                st.warning(f"지원하지 않는 파일 형식: {file.name}")
+                st.warning(f"Unsupported file format: {file.name}")
                 continue
             
             if not text.strip():
-                st.warning(f"파일에서 텍스트를 추출할 수 없습니다: {file.name}")
+                st.warning(f"No text extracted from: {file.name}")
                 continue
             
-            # 텍스트를 청크로 분할
             chunks = split_text_into_chunks(text, chunk_size=500)
             
             for i, chunk in enumerate(chunks):
@@ -149,17 +317,17 @@ def process_documents(files):
                 })
         
         except Exception as e:
-            st.error(f"파일 {file.name} 처리 중 오류: {e}")
+            st.error(f"Error processing {file.name}: {e}")
     
     return documents
 
 @st.cache_resource
 def load_sentence_transformer():
-    """SentenceTransformer 모델 로드 (캐싱)"""
+    """SentenceTransformer 모델 로드"""
     try:
         return SentenceTransformer('all-MiniLM-L6-v2')
     except Exception as e:
-        st.error(f"SentenceTransformer 로드 오류: {e}")
+        st.error(f"SentenceTransformer loading error: {e}")
         return None
 
 def create_embeddings(documents):
@@ -178,7 +346,7 @@ def create_embeddings(documents):
         return embeddings, encoder
     
     except Exception as e:
-        st.error(f"임베딩 생성 중 오류: {e}")
+        st.error(f"Embedding generation error: {e}")
         return None, None
 
 def search_documents(query, documents, embeddings, encoder, n_results=3):
@@ -187,24 +355,19 @@ def search_documents(query, documents, embeddings, encoder, n_results=3):
         if not documents or embeddings is None or encoder is None:
             return []
         
-        # 쿼리 임베딩
         query_embedding = encoder.encode([query])
-        
-        # 유사도 계산
         similarities = cosine_similarity(query_embedding, embeddings)[0]
-        
-        # 상위 결과 선택
         top_indices = np.argsort(similarities)[::-1][:n_results]
         
         results = []
         for idx in top_indices:
-            if similarities[idx] > 0.1:  # 최소 유사도 임계값
+            if similarities[idx] > 0.1:
                 results.append(documents[idx]['text'])
         
         return results
     
     except Exception as e:
-        st.error(f"문서 검색 중 오류: {e}")
+        st.error(f"Document search error: {e}")
         return []
 
 def generate_response(query, context_docs, api_key):
@@ -212,171 +375,109 @@ def generate_response(query, context_docs, api_key):
     try:
         model = genai.GenerativeModel('gemini-1.5-flash')
         
-        # 컨텍스트와 함께 프롬프트 구성
         if context_docs:
             context = "\n\n".join(context_docs)
             prompt = f"""
-다음 문서 내용을 기반으로 질문에 답변해주세요.
+Based on the following document content, please answer the question professionally.
 
-문서 내용:
+Document Content:
 {context}
 
-질문: {query}
+Question: {query}
 
-답변 시 다음 규칙을 따라주세요:
-1. 문서 내용을 기반으로 정확하게 답변하세요
-2. 문서에 없는 내용은 추측하지 말고 "문서에서 해당 정보를 찾을 수 없습니다"라고 말하세요
-3. 한국어로 친근하고 도움이 되는 톤으로 답변하세요
-4. 가능하면 구체적인 예시나 세부 정보를 포함하세요
+Please follow these guidelines:
+1. Answer accurately based on the document content
+2. If information is not in the documents, state "The requested information is not available in the uploaded documents"
+3. Use a professional and helpful tone
+4. Include specific examples or details when possible
+5. Respond in Korean if the question is in Korean
 """
         else:
             prompt = f"""
-업로드된 문서가 없거나 관련 정보를 찾을 수 없습니다.
+No uploaded documents found or no relevant information available.
 
-질문: {query}
+Question: {query}
 
-일반적인 지식을 바탕으로 도움이 될 만한 답변을 제공하되, 
-"업로드된 문서에서 관련 정보를 찾을 수 없어 일반적인 답변을 드립니다"라고 먼저 언급해주세요.
+Please provide a general response based on your knowledge, but first mention that "No relevant information was found in the uploaded documents, so I'm providing a general response."
+Respond in Korean if the question is in Korean.
 """
         
         response = model.generate_content(prompt)
         return response.text
     
     except Exception as e:
-        return f"응답 생성 중 오류가 발생했습니다: {e}"
+        return f"Error generating response: {e}"
 
-# 메인 인터페이스
-col1, col2 = st.columns([2, 1])
+# 메인 채팅 인터페이스
+st.header("AI Chat Interface")
 
-with col1:
-    st.header("💬 AI 채팅")
-    
-    # 채팅 메시지 표시
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
-    
-    # 사용자 입력
-    if prompt := st.chat_input("궁금한 것을 물어보세요..."):
-        # 사용자 메시지 추가
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
-        
-        # AI 응답 생성
-        if api_key:
-            with st.chat_message("assistant"):
-                with st.spinner("AI가 답변을 생성하고 있습니다..."):
-                    # 문서 검색
-                    relevant_docs = search_documents(
-                        prompt, 
-                        st.session_state.documents, 
-                        st.session_state.embeddings, 
-                        st.session_state.encoder
-                    )
-                    
-                    # 응답 생성
-                    response = generate_response(prompt, relevant_docs, api_key)
-                    
-                    st.markdown(response)
-                    
-                    # 찾은 문서 정보 표시
-                    if relevant_docs:
-                        with st.expander(f"📚 참고한 문서 ({len(relevant_docs)}개)"):
-                            for i, doc in enumerate(relevant_docs):
-                                st.write(f"**문서 {i+1}:**")
-                                st.write(doc[:200] + "..." if len(doc) > 200 else doc)
-                                st.divider()
-                    
-                    # 응답을 세션에 저장
-                    st.session_state.messages.append({"role": "assistant", "content": response})
-        else:
-            with st.chat_message("assistant"):
-                st.error("API 키를 먼저 입력해주세요!")
+# 채팅 메시지 표시
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-with col2:
-    st.header("📊 문서 현황")
+# 사용자 입력
+if prompt := st.chat_input("Enter your question..."):
+    # 사용자 메시지 추가
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
     
-    # 문서 업로드 처리
-    if uploaded_files:
-        if st.button("📤 문서 처리하기", type="primary"):
-            with st.spinner("문서를 처리하고 있습니다..."):
-                # 문서 처리
-                documents = process_documents(uploaded_files)
+    # AI 응답 생성
+    if api_key:
+        with st.chat_message("assistant"):
+            with st.spinner("Generating response..."):
+                # 문서 검색
+                relevant_docs = search_documents(
+                    prompt, 
+                    st.session_state.documents, 
+                    st.session_state.embeddings, 
+                    st.session_state.encoder
+                )
                 
-                if documents:
-                    st.session_state.documents = documents
-                    
-                    # 임베딩 생성
-                    with st.spinner("문서 임베딩을 생성하고 있습니다..."):
-                        embeddings, encoder = create_embeddings(documents)
-                        if embeddings is not None:
-                            st.session_state.embeddings = embeddings
-                            st.session_state.encoder = encoder
-                            st.success(f"✅ {len(documents)}개의 문서 청크가 처리되었습니다!")
-                        else:
-                            st.error("❌ 임베딩 생성에 실패했습니다.")
-                else:
-                    st.warning("⚠️ 처리할 수 있는 문서가 없습니다.")
+                # 응답 생성
+                response = generate_response(prompt, relevant_docs, api_key)
                 
-                st.rerun()
-    
-    # 현재 문서 상태 표시
-    if st.session_state.documents:
-        st.info(f"📁 처리된 문서: {len(st.session_state.documents)}개 청크")
-        
-        # 파일별 청크 수 표시
-        file_counts = {}
-        for doc in st.session_state.documents:
-            filename = doc['filename']
-            file_counts[filename] = file_counts.get(filename, 0) + 1
-        
-        for filename, count in file_counts.items():
-            st.write(f"• {filename}: {count}개 청크")
-        
-        # 임베딩 상태
-        if st.session_state.embeddings is not None:
-            st.success("🔍 검색 기능 활성화됨")
-        else:
-            st.warning("⚠️ 검색 기능 비활성화")
-    
-    # 채팅 히스토리 관리
-    st.header("🗑️ 관리")
-    
-    col_clear1, col_clear2 = st.columns(2)
-    
-    with col_clear1:
-        if st.button("🔄 채팅 초기화"):
-            st.session_state.messages = []
-            st.rerun()
-    
-    with col_clear2:
-        if st.button("📂 문서 초기화"):
-            st.session_state.documents = []
-            st.session_state.embeddings = None
-            st.session_state.encoder = None
-            st.rerun()
+                st.markdown(response)
+                
+                # 참고 문서 정보 표시
+                if relevant_docs:
+                    with st.expander(f"Referenced Documents ({len(relevant_docs)} sources)"):
+                        for i, doc in enumerate(relevant_docs):
+                            st.markdown(f"**Source {i+1}:**")
+                            st.text(doc[:200] + "..." if len(doc) > 200 else doc)
+                            if i < len(relevant_docs) - 1:
+                                st.markdown("---")
+                
+                # 응답을 세션에 저장
+                st.session_state.messages.append({"role": "assistant", "content": response})
+    else:
+        with st.chat_message("assistant"):
+            st.error("Please enter your API key in the sidebar to enable AI features.")
 
 # 사용법 안내
-with st.expander("📖 사용법 안내"):
-    st.markdown("""
-    ### 🚀 시작하기
-    1. **사이드바**에서 Google Gemini API 키를 입력하세요
-    2. **문서를 업로드**하고 "문서 처리하기" 버튼을 클릭하세요
-    3. **채팅창**에서 문서 내용에 대해 질문하세요
+with st.expander("System Information"):
+    col1, col2 = st.columns(2)
     
-    ### 💡 팁
-    - PDF, DOCX, TXT 파일을 지원합니다
-    - 여러 파일을 동시에 업로드할 수 있습니다
-    - 구체적인 질문을 하면 더 정확한 답변을 받을 수 있습니다
-    - 답변 하단의 "참고한 문서" 섹션에서 출처를 확인할 수 있습니다
+    with col1:
+        st.markdown("""
+        **Getting Started:**
+        1. Enter your Google Gemini API key in the sidebar
+        2. Upload documents using the file uploader
+        3. Click "Process Documents" to enable AI search
+        4. Ask questions about your documents in the chat
+        """)
     
-    ### ⚠️ 주의사항
-    - API 키는 안전하게 관리하세요
-    - 업로드된 문서는 세션이 끝나면 삭제됩니다
-    - 첫 번째 문서 처리 시 모델 다운로드로 시간이 걸릴 수 있습니다
-    """)
+    with col2:
+        st.markdown("""
+        **Features:**
+        - PDF, DOCX, TXT file support
+        - Multiple file upload capability
+        - Vector-based document search
+        - Professional AI responses
+        - Source document references
+        """)
 
 # 푸터
-st.divider()
-st.markdown("**🤖 Google Gemini 기반 RAG 챗봇** | 문서 기반 지능형 질의응답 시스템")
+st.markdown("---")
+st.markdown("**Corporate AI Assistant** | Enterprise Document Intelligence Platform | Powered by Google Gemini")
