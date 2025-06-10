@@ -533,49 +533,168 @@ with st.sidebar:
 # 메인 채팅 인터페이스
 st.header("AI Chat Interface")
 
-# 채팅 메시지 표시
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+# 초기 환영 메시지 (채팅이 비어있을 때만 표시)
+if not st.session_state.messages:
+    st.markdown("""
+    <div style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 300px;
+        flex-direction: column;
+    ">
+        <h1 style="
+            font-size: 3rem;
+            font-weight: 300;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            text-align: center;
+        ">안녕하세요</h1>
+        <p style="
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            text-align: center;
+            margin-bottom: 3rem;
+        ">AHN's AI Assistant가 도와드리겠습니다</p>
+    </div>
+    """, unsafe_allow_html=True)
 
-# 사용자 입력
-if prompt := st.chat_input("Enter your question..."):
+# 채팅 메시지 표시 (커스텀 스타일)
+if st.session_state.messages:
+    for message in st.session_state.messages:
+        if message["role"] == "user":
+            # 사용자 메시지 - 우측 정렬
+            st.markdown(f"""
+            <div style="
+                display: flex;
+                justify-content: flex-end;
+                margin: 1rem 0;
+            ">
+                <div style="
+                    background-color: #e3f2fd;
+                    color: #1565c0;
+                    padding: 0.8rem 1.2rem;
+                    border-radius: 18px 18px 4px 18px;
+                    max-width: 70%;
+                    font-size: 0.95rem;
+                    line-height: 1.4;
+                    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+                ">
+                    {message["content"]}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            # AI 응답 - 좌측 정렬
+            st.markdown(f"""
+            <div style="
+                display: flex;
+                justify-content: flex-start;
+                margin: 1rem 0;
+                align-items: flex-start;
+            ">
+                <div style="
+                    background-color: #f5f5f5;
+                    color: #2c3e50;
+                    padding: 0.8rem 1.2rem;
+                    border-radius: 18px 18px 18px 4px;
+                    max-width: 75%;
+                    font-size: 0.95rem;
+                    line-height: 1.5;
+                    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+                    border: 1px solid #e9ecef;
+                ">
+                    {message["content"]}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            # 참고 문서가 있을 경우 표시
+            if "references" in message:
+                with st.expander(f"📚 참고한 문서 ({len(message['references'])}개)"):
+                    for i, doc in enumerate(message["references"]):
+                        st.write(f"**문서 {i+1}:**")
+                        st.write(doc[:200] + "..." if len(doc) > 200 else doc)
+                        if i < len(message["references"]) - 1:
+                            st.markdown("---")
+
+# 커스텀 채팅 입력창
+st.markdown("""
+<style>
+    /* 채팅 입력창 커스터마이징 */
+    .stChatInput {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        border-top: 1px solid #e9ecef;
+        padding: 1rem;
+        z-index: 999;
+    }
+    
+    [data-testid="stChatInput"] {
+        margin-bottom: 0;
+    }
+    
+    [data-testid="stChatInput"] textarea {
+        border: 2px solid #e9ecef !important;
+        border-radius: 25px !important;
+        padding: 12px 20px !important;
+        font-size: 1rem !important;
+        resize: none !important;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
+        transition: all 0.2s ease !important;
+    }
+    
+    [data-testid="stChatInput"] textarea:focus {
+        border-color: #3498db !important;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1), 0 2px 10px rgba(0,0,0,0.15) !important;
+        outline: none !important;
+    }
+    
+    [data-testid="stChatInput"] textarea::placeholder {
+        color: #7f8c8d !important;
+        font-size: 1rem !important;
+    }
+    
+    /* 메인 컨텐츠 하단 여백 추가 */
+    .main .block-container {
+        padding-bottom: 120px !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# 사용자 입력 (커스텀 placeholder)
+if prompt := st.chat_input("AHN'S AI 에게 물어보기"):
     # 사용자 메시지 추가
     st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
-        st.markdown(prompt)
     
     # AI 응답 생성
     if api_key:
-        with st.chat_message("assistant"):
-            with st.spinner("Generating response..."):
-                # 문서 검색
-                relevant_docs = search_documents(
-                    prompt, 
-                    st.session_state.documents, 
-                    st.session_state.embeddings, 
-                    st.session_state.encoder
-                )
-                
-                # 응답 생성
-                response = generate_response(prompt, relevant_docs, api_key)
-                
-                st.markdown(response)
-                
-                # 참고 문서 정보 표시
-                if relevant_docs:
-                    with st.expander(f"Referenced Documents ({len(relevant_docs)} sources)"):
-                        for i, doc in enumerate(relevant_docs):
-                            st.markdown(f"**Source {i+1}:**")
-                            st.text(doc[:200] + "..." if len(doc) > 200 else doc)
-                            if i < len(relevant_docs) - 1:
-                                st.markdown("---")
-                
-                # 응답을 세션에 저장
-                st.session_state.messages.append({"role": "assistant", "content": response})
+        with st.spinner("답변을 생성하고 있습니다..."):
+            # 문서 검색
+            relevant_docs = search_documents(
+                prompt, 
+                st.session_state.documents, 
+                st.session_state.embeddings, 
+                st.session_state.encoder
+            )
+            
+            # 응답 생성
+            response = generate_response(prompt, relevant_docs, api_key)
+            
+            # 응답을 세션에 저장 (참고 문서 포함)
+            message_data = {"role": "assistant", "content": response}
+            if relevant_docs:
+                message_data["references"] = relevant_docs
+            
+            st.session_state.messages.append(message_data)
+            
+        # 페이지 새로고침으로 UI 업데이트
+        st.rerun()
     else:
-        with st.chat_message("assistant"):
-            st.error("Please enter your API key in the sidebar to enable AI features.")
+        st.error("사이드바에서 API 키를 먼저 입력해주세요!")
 
 # 사용법 안내
 with st.expander("System Information"):
