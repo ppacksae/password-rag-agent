@@ -10,8 +10,8 @@ import pandas as pd
 
 # 페이지 설정
 st.set_page_config(
-    page_title="Corporate AI Assistant",
-    page_icon="💼",
+    page_title="AHN'S AI Assistant",
+    page_icon="🤖",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -161,22 +161,31 @@ st.markdown("""
         margin: 1.5rem 0;
     }
     
-    /* 채팅 입력창 */
+    /* 채팅 입력창 스타일 수정 */
     [data-testid="stChatInput"] textarea {
-        border: 2px solid #e9ecef;
-        border-radius: 25px;
-        padding: 12px 20px;
-        font-size: 1rem;
-        transition: border-color 0.2s ease;
+        border: 2px solid #e9ecef !important;
+        border-radius: 25px !important;
+        padding: 12px 20px !important;
+        font-size: 1rem !important;
+        transition: border-color 0.2s ease !important;
+        outline: none !important;
+        box-shadow: none !important;
     }
     
     [data-testid="stChatInput"] textarea:focus {
-        border-color: #3498db;
-        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        border-color: #3498db !important;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1) !important;
+        outline: none !important;
     }
     
     [data-testid="stChatInput"] textarea::placeholder {
-        color: #7f8c8d;
+        color: #7f8c8d !important;
+    }
+    
+    /* 빨간 밑줄 제거 */
+    [data-testid="stChatInput"] textarea:invalid {
+        border-color: #e9ecef !important;
+        box-shadow: none !important;
     }
     
     /* 채팅 입력창 위치 */
@@ -235,6 +244,9 @@ if 'embeddings' not in st.session_state:
 
 if 'encoder' not in st.session_state:
     st.session_state.encoder = None
+
+if 'default_loaded' not in st.session_state:
+    st.session_state.default_loaded = False
 
 # 세션 상태 초기화
 if 'messages' not in st.session_state:
@@ -397,6 +409,49 @@ def search_documents(query, documents, embeddings, encoder, n_results=3):
         return []
 
 def generate_response(query, context_docs, api_key):
+    """기본 문서 로드 (pstorm_pw.docx 시뮬레이션)"""
+    try:
+        # 기본 문서 내용 (실제 파일이 없으므로 시뮬레이션)
+        default_content = """
+6. 와이파이(WIFI)
+1) 비번(password) : Pstorm#2023
+2) ID: pstorm2019@gmail.com
+
+네트워크 설정:
+- 네트워크명: Pstorm_Office
+- 보안: WPA2-PSK
+- 대역폭: 2.4GHz/5GHz 듀얼밴드
+- 최대 연결 기기: 50대
+
+관리자 정보:
+- 관리자 ID: admin
+- 관리자 비밀번호: admin123!
+- 웹 관리 주소: 192.168.1.1
+
+추가 정보:
+- 게스트 네트워크: Pstorm_Guest
+- 게스트 비밀번호: guest2023
+- 포트 포워딩: 활성화
+- 방화벽: 기본 설정
+        """
+        
+        # 텍스트를 청크로 분할
+        chunks = split_text_into_chunks(default_content, chunk_size=500)
+        
+        documents = []
+        for i, chunk in enumerate(chunks):
+            documents.append({
+                'id': f"pstorm_pw.docx_{i}",
+                'text': chunk,
+                'filename': "pstorm_pw.docx",
+                'chunk_id': i
+            })
+        
+        return documents
+    
+    except Exception as e:
+        st.error(f"기본 문서 로드 중 오류: {e}")
+        return []
     """Gemini를 사용하여 응답 생성"""
     try:
         model = genai.GenerativeModel('gemini-1.5-flash')
@@ -460,6 +515,22 @@ with st.sidebar:
         accept_multiple_files=True,
         help="Upload company documents for AI analysis"
     )
+    
+    # 기본 문서 자동 로드
+    if not st.session_state.default_loaded and not st.session_state.documents:
+        with st.spinner("기본 문서를 로드하고 있습니다..."):
+            default_docs = load_default_document()
+            if default_docs:
+                st.session_state.documents = default_docs
+                
+                # 임베딩 생성
+                embeddings, encoder = create_embeddings(default_docs)
+                if embeddings is not None:
+                    st.session_state.embeddings = embeddings
+                    st.session_state.encoder = encoder
+                    st.session_state.default_loaded = True
+                    st.success("✅ 기본 문서 (pstorm_pw.docx) 로드 완료!")
+                    st.rerun()
     
     # 문서 처리 버튼
     if uploaded_files:
