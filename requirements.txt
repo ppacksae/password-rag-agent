@@ -3,3 +3,7 @@ openai
 chromadb
 python-dotenv
 pandas
+sentence-transformers
+langchain
+langchain-community
+langchain-openai
