@@ -10,7 +10,7 @@ import pandas as pd
 
 # 페이지 설정
 st.set_page_config(
-    page_title="AHN'S AI Assistant",
+    page_title="Corporate AI Assistant",
     page_icon="💼",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -533,108 +533,143 @@ with st.sidebar:
 # 메인 채팅 인터페이스
 st.header("AI Chat Interface")
 
-# 초기 환영 메시지 (채팅이 비어있을 때만 표시)
-if not st.session_state.messages:
-    st.markdown("""
-    <div style="
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 300px;
-        flex-direction: column;
-    ">
-        <h1 style="
-            font-size: 3rem;
-            font-weight: 300;
-            color: #2c3e50;
-            margin-bottom: 2rem;
-            text-align: center;
-        ">안녕하세요</h1>
-        <p style="
-            font-size: 1.2rem;
-            color: #7f8c8d;
-            text-align: center;
-            margin-bottom: 3rem;
-        ">AHN's AI Assistant가 도와드리겠습니다</p>
-    </div>
-    """, unsafe_allow_html=True)
+# 채팅 컨테이너 (사이드바 너비만큼 여백 추가)
+chat_container = st.container()
 
-# 채팅 메시지 표시 (커스텀 스타일)
-if st.session_state.messages:
-    for message in st.session_state.messages:
-        if message["role"] == "user":
-            # 사용자 메시지 - 우측 정렬
-            st.markdown(f"""
-            <div style="
-                display: flex;
-                justify-content: flex-end;
-                margin: 1rem 0;
-            ">
+with chat_container:
+    # 초기 환영 메시지 (채팅이 비어있을 때만 표시)
+    if not st.session_state.messages:
+        st.markdown("""
+        <div style="
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 300px;
+            flex-direction: column;
+            margin-left: 0;
+        ">
+            <h1 style="
+                font-size: 3rem;
+                font-weight: 300;
+                color: #2c3e50;
+                margin-bottom: 2rem;
+                text-align: center;
+            ">안녕하세요</h1>
+            <p style="
+                font-size: 1.2rem;
+                color: #7f8c8d;
+                text-align: center;
+                margin-bottom: 3rem;
+            ">AHN'S AI Assistant가 도와드리겠습니다</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # 채팅 메시지 표시 (커스텀 스타일)
+    if st.session_state.messages:
+        for i, message in enumerate(st.session_state.messages):
+            if message["role"] == "user":
+                # 사용자 메시지 - 우측 정렬
+                st.markdown(f"""
                 <div style="
-                    background-color: #e3f2fd;
-                    color: #1565c0;
-                    padding: 0.8rem 1.2rem;
-                    border-radius: 18px 18px 4px 18px;
-                    max-width: 70%;
-                    font-size: 0.95rem;
-                    line-height: 1.4;
-                    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+                    display: flex;
+                    justify-content: flex-end;
+                    margin: 1rem 0;
+                    padding-right: 1rem;
                 ">
-                    {message["content"]}
+                    <div style="
+                        background-color: #e3f2fd;
+                        color: #1565c0;
+                        padding: 0.8rem 1.2rem;
+                        border-radius: 18px 18px 4px 18px;
+                        max-width: 70%;
+                        font-size: 0.95rem;
+                        line-height: 1.4;
+                        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+                        word-wrap: break-word;
+                    ">
+                        {message["content"]}
+                    </div>
                 </div>
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            # AI 응답 - 좌측 정렬
-            st.markdown(f"""
-            <div style="
-                display: flex;
-                justify-content: flex-start;
-                margin: 1rem 0;
-                align-items: flex-start;
-            ">
+                """, unsafe_allow_html=True)
+            else:
+                # AI 응답 - 좌측 정렬
+                st.markdown(f"""
                 <div style="
-                    background-color: #f5f5f5;
-                    color: #2c3e50;
-                    padding: 0.8rem 1.2rem;
-                    border-radius: 18px 18px 18px 4px;
-                    max-width: 75%;
-                    font-size: 0.95rem;
-                    line-height: 1.5;
-                    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-                    border: 1px solid #e9ecef;
+                    display: flex;
+                    justify-content: flex-start;
+                    margin: 1rem 0;
+                    align-items: flex-start;
+                    padding-left: 1rem;
                 ">
-                    {message["content"]}
+                    <div style="
+                        background-color: #f5f5f5;
+                        color: #2c3e50;
+                        padding: 0.8rem 1.2rem;
+                        border-radius: 18px 18px 18px 4px;
+                        max-width: 75%;
+                        font-size: 0.95rem;
+                        line-height: 1.5;
+                        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+                        border: 1px solid #e9ecef;
+                        word-wrap: break-word;
+                    ">
+                        {message["content"]}
+                    </div>
                 </div>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            # 참고 문서가 있을 경우 표시
-            if "references" in message:
-                with st.expander(f"📚 참고한 문서 ({len(message['references'])}개)"):
-                    for i, doc in enumerate(message["references"]):
-                        st.write(f"**문서 {i+1}:**")
-                        st.write(doc[:200] + "..." if len(doc) > 200 else doc)
-                        if i < len(message["references"]) - 1:
-                            st.markdown("---")
+                """, unsafe_allow_html=True)
+                
+                # 참고 문서가 있을 경우 표시
+                if "references" in message:
+                    with st.expander(f"📚 참고한 문서 ({len(message['references'])}개)"):
+                        for j, doc in enumerate(message["references"]):
+                            st.write(f"**문서 {j+1}:**")
+                            st.write(doc[:200] + "..." if len(doc) > 200 else doc)
+                            if j < len(message["references"]) - 1:
+                                st.markdown("---")
 
 # 커스텀 채팅 입력창
 st.markdown("""
 <style>
+    /* 메인 컨텐츠 영역 사이드바 겹침 방지 */
+    .main .block-container {
+        padding-bottom: 120px !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    
+    /* 사이드바가 있을 때 메인 콘텐츠 여백 조정 */
+    .main {
+        margin-left: 0 !important;
+    }
+    
+    /* 채팅 컨테이너 스타일 */
+    .chat-container {
+        margin-left: 0;
+        width: 100%;
+        max-width: none;
+    }
+    
     /* 채팅 입력창 커스터마이징 */
     .stChatInput {
         position: fixed;
         bottom: 0;
-        left: 0;
+        left: 320px; /* 사이드바 너비만큼 여백 */
         right: 0;
         background: white;
         border-top: 1px solid #e9ecef;
         padding: 1rem;
         z-index: 999;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    }
+    
+    /* 사이드바가 축소된 경우 */
+    .css-1lcbmhc.e1fqkh3o0 + .main .stChatInput {
+        left: 60px;
     }
     
     [data-testid="stChatInput"] {
         margin-bottom: 0;
+        max-width: calc(100vw - 360px); /* 사이드바 고려한 최대 너비 */
     }
     
     [data-testid="stChatInput"] textarea {
@@ -645,6 +680,7 @@ st.markdown("""
         resize: none !important;
         box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
         transition: all 0.2s ease !important;
+        width: 100% !important;
     }
     
     [data-testid="stChatInput"] textarea:focus {
@@ -658,9 +694,19 @@ st.markdown("""
         font-size: 1rem !important;
     }
     
-    /* 메인 컨텐츠 하단 여백 추가 */
-    .main .block-container {
-        padding-bottom: 120px !important;
+    /* 채팅 메시지 영역 여백 */
+    .element-container:has([data-testid="stChatInput"]) {
+        margin-bottom: 80px;
+    }
+    
+    /* 모바일 대응 */
+    @media (max-width: 768px) {
+        .stChatInput {
+            left: 0;
+        }
+        [data-testid="stChatInput"] {
+            max-width: 100vw;
+        }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -721,4 +767,4 @@ with st.expander("System Information"):
 
 # 푸터
 st.markdown("---")
-st.markdown("**Corporate AI Assistant** | Enterprise Document Intelligence Platform | Powered by Google Gemini")
+st.markdown("**AHN'S AI Assistant** | Enterprise Document Intelligence Platform | Powered by Google Gemini")
