@@ -10,7 +10,7 @@ import pandas as pd
 
 # 페이지 설정
 st.set_page_config(
-    page_title="AHN's AI Assistant",
+    page_title="AHN'S AI Assistant",
     page_icon="💼",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -19,114 +19,113 @@ st.set_page_config(
 # 다크모드 CSS 스타일
 st.markdown("""
 <style>
-    /* 메인 컨테이너 */
-    .main .block-container {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
+    /* 강제 다크모드 - 모든 요소 */
+    * {
+        color: #fafafa !important;
     }
     
-    /* 다크 테마 전체 적용 */
-    .stApp {
-        background-color: #0e1117;
-        color: #fafafa;
+    /* 메인 앱 배경 */
+    .stApp, .main, .block-container {
+        background-color: #0e1117 !important;
+        color: #fafafa !important;
     }
     
-    /* 사이드바 완전 다크모드 */
-    .css-1d391kg, .css-1lcbmhc, .css-17eq0hr {
+    /* 사이드바 - 모든 가능한 클래스명 적용 */
+    .css-1d391kg, .css-1lcbmhc, .css-17eq0hr, .css-1544g2n, 
+    .css-18e3th9, .css-1outpf7, .css-k1vhr4, .css-1y4p8pa,
+    [data-testid="stSidebar"], [data-testid="stSidebarNav"],
+    .css-1aumxhk, .sidebar .sidebar-content {
         background-color: #1a1d23 !important;
         color: #fafafa !important;
     }
     
-    /* 사이드바 모든 텍스트 흰색 */
-    .css-1d391kg * {
-        color: #fafafa !important;
-    }
-    
+    /* 사이드바 모든 하위 요소 강제 흰색 */
+    [data-testid="stSidebar"] *, 
+    [data-testid="stSidebar"] h1,
+    [data-testid="stSidebar"] h2, 
+    [data-testid="stSidebar"] h3,
+    [data-testid="stSidebar"] p,
+    [data-testid="stSidebar"] span,
+    [data-testid="stSidebar"] div,
+    [data-testid="stSidebar"] label,
+    .css-1d391kg *,
     .css-1lcbmhc * {
-        color: #fafafa !important;
-    }
-    
-    /* 사이드바 헤더 스타일 */
-    .css-1d391kg h1, .css-1d391kg h2, .css-1d391kg h3 {
         color: #ffffff !important;
-        font-weight: 600;
+        background-color: transparent !important;
     }
     
-    /* 사이드바 구분선 */
-    .css-1d391kg hr {
-        border-color: #404040 !important;
+    /* 메인 콘텐츠 영역 다크 */
+    .main .block-container {
+        background-color: #0e1117 !important;
+        padding-top: 2rem;
+        padding-bottom: 2rem;
     }
     
-    /* 사이드바 메트릭 스타일 */
-    .css-1d391kg .metric-container {
+    /* 채팅 메시지 컨테이너 */
+    [data-testid="stChatMessageContainer"] {
         background-color: #262730 !important;
         border: 1px solid #404040 !important;
-        border-radius: 6px;
-        padding: 0.5rem;
+        border-radius: 8px !important;
+        margin: 0.5rem 0 !important;
     }
     
-    /* 채팅 메시지 스타일 */
+    /* 채팅 메시지 */
     .stChatMessage {
-        background-color: #1e1e1e;
-        border: 1px solid #333;
-        border-radius: 8px;
-        margin: 0.5rem 0;
-    }
-    
-    /* 입력 필드 스타일 개선 */
-    .stTextInput > div > div > input {
         background-color: #262730 !important;
+        border: 1px solid #404040 !important;
+        border-radius: 8px !important;
         color: #fafafa !important;
-        border: 1px solid #444 !important;
-        border-radius: 4px;
     }
     
-    .stTextInput > div > div > input:focus {
+    /* 입력 필드들 */
+    .stTextInput > div > div > input,
+    .stTextInput input,
+    .stPasswordInput > div > div > input,
+    .stPasswordInput input,
+    [data-testid="stTextInput"] input {
+        background-color: #262730 !important;
+        color: #ffffff !important;
+        border: 1px solid #555 !important;
+        border-radius: 6px !important;
+    }
+    
+    .stTextInput input:focus,
+    .stPasswordInput input:focus {
         border-color: #0066cc !important;
-        box-shadow: 0 0 0 1px #0066cc;
+        box-shadow: 0 0 0 1px #0066cc !important;
     }
     
-    /* 비밀번호 입력 필드 */
-    .stTextInput input[type="password"] {
-        background-color: #262730 !important;
-        color: #fafafa !important;
-        border: 1px solid #444 !important;
-    }
-    
-    /* 버튼 스타일 개선 */
+    /* 버튼들 */
     .stButton > button {
         background-color: #0066cc !important;
         color: white !important;
         border: none !important;
         border-radius: 6px !important;
-        font-weight: 500;
-        padding: 0.5rem 1rem;
-        transition: all 0.2s ease;
+        font-weight: 500 !important;
+        padding: 0.5rem 1rem !important;
     }
     
     .stButton > button:hover {
         background-color: #0052a3 !important;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(0, 102, 204, 0.3);
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 8px rgba(0, 102, 204, 0.3) !important;
     }
     
-    /* Primary 버튼 스타일 */
+    /* Primary 버튼 */
     .stButton > button[kind="primary"] {
         background-color: #00cc66 !important;
-        color: white !important;
     }
     
     .stButton > button[kind="primary"]:hover {
         background-color: #00b359 !important;
     }
     
-    /* 파일 업로더 스타일 개선 */
+    /* 파일 업로더 */
     .stFileUploader {
         background-color: #262730 !important;
         border: 2px dashed #666 !important;
-        border-radius: 8px;
-        padding: 1.5rem;
-        color: #fafafa !important;
+        border-radius: 8px !important;
+        padding: 1.5rem !important;
     }
     
     .stFileUploader:hover {
@@ -134,104 +133,99 @@ st.markdown("""
         background-color: #2a2d35 !important;
     }
     
-    .stFileUploader label {
-        color: #fafafa !important;
+    .stFileUploader label,
+    .stFileUploader div,
+    .stFileUploader span {
+        color: #ffffff !important;
     }
     
-    /* 헤더 스타일 */
+    /* 헤더들 */
     h1, h2, h3, h4, h5, h6 {
         color: #ffffff !important;
-        font-weight: 600;
+        font-weight: 600 !important;
     }
     
-    /* 일반 텍스트 */
-    p, span, div {
-        color: #fafafa;
-    }
-    
-    /* 성공/정보 메시지 스타일 개선 */
+    /* 성공/경고/에러 메시지 */
     .stSuccess {
         background-color: #1a472a !important;
         border: 1px solid #2d5a3d !important;
         color: #ffffff !important;
-        border-radius: 6px;
+        border-radius: 6px !important;
     }
     
     .stInfo {
         background-color: #1a365d !important;
         border: 1px solid #2d5a87 !important;
         color: #ffffff !important;
-        border-radius: 6px;
+        border-radius: 6px !important;
     }
     
     .stWarning {
         background-color: #744210 !important;
         border: 1px solid #975a16 !important;
         color: #ffffff !important;
-        border-radius: 6px;
+        border-radius: 6px !important;
     }
     
     .stError {
         background-color: #742a2a !important;
         border: 1px solid #9b2c2c !important;
         color: #ffffff !important;
-        border-radius: 6px;
+        border-radius: 6px !important;
     }
     
-    /* 확장 가능한 섹션 스타일 */
+    /* 확장 가능한 섹션 */
     .streamlit-expanderHeader {
         background-color: #262730 !important;
         color: #ffffff !important;
         border: 1px solid #404040 !important;
-        border-radius: 6px;
+        border-radius: 6px !important;
     }
     
     .streamlit-expanderContent {
         background-color: #1e1e1e !important;
         border: 1px solid #404040 !important;
         color: #fafafa !important;
+        border-radius: 0 0 6px 6px !important;
     }
     
-    /* 데이터프레임 스타일 */
-    .stDataFrame {
-        background-color: #1e1e1e !important;
-        color: #fafafa !important;
-    }
-    
-    /* 메트릭 컴포넌트 스타일 */
-    .metric-container {
+    /* 메트릭 */
+    [data-testid="metric-container"] {
         background-color: #262730 !important;
         border: 1px solid #404040 !important;
-        border-radius: 6px;
-        padding: 1rem;
+        border-radius: 6px !important;
+        padding: 1rem !important;
     }
     
-    /* 스피너 스타일 */
+    [data-testid="metric-container"] * {
+        color: #ffffff !important;
+    }
+    
+    /* 채팅 입력창 */
+    [data-testid="stChatInput"] textarea,
+    .stChatInput textarea {
+        background-color: #262730 !important;
+        color: #ffffff !important;
+        border: 1px solid #555 !important;
+        border-radius: 6px !important;
+    }
+    
+    /* 스피너 */
     .stSpinner {
         color: #0066cc !important;
     }
     
-    /* 채팅 입력창 스타일 */
-    .stChatInputContainer {
-        background-color: #262730 !important;
-        border: 1px solid #404040 !important;
+    /* 구분선 */
+    hr {
+        border-color: #404040 !important;
     }
     
-    .stChatInput > div > div > textarea {
-        background-color: #262730 !important;
+    /* 일반 텍스트들 */
+    p, span, div, label {
         color: #fafafa !important;
-        border: 1px solid #404040 !important;
-        border-radius: 6px;
     }
     
-    /* 사이드바 선택박스 및 기타 위젯 */
-    .stSelectbox > div > div {
-        background-color: #262730 !important;
-        color: #fafafa !important;
-        border: 1px solid #404040 !important;
-    }
-    
-    /* 링크 색상 */
+    /* 링크 */
     a {
         color: #66b3ff !important;
     }
@@ -240,17 +234,28 @@ st.markdown("""
         color: #4da6ff !important;
     }
     
-    /* 코드 블록 스타일 */
-    .stCode {
+    /* 코드 블록 */
+    .stCode, code, pre {
         background-color: #1e1e1e !important;
         color: #fafafa !important;
         border: 1px solid #404040 !important;
+    }
+    
+    /* 데이터프레임 */
+    .stDataFrame, .dataframe {
+        background-color: #1e1e1e !important;
+        color: #fafafa !important;
+    }
+    
+    /* 도움말 텍스트 */
+    .stHelp, [data-testid="stTooltipHoverTarget"] {
+        color: #cccccc !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
 # 제목 및 헤더
-st.title("AHN's AI Assistant")
+st.title("AHN'S AI Assistant")
 st.markdown("**Enterprise Document Intelligence Platform**")
 st.markdown("---")
 
