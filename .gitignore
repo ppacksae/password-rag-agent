@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+improved_chroma_db/
+web_chroma_db/
+*.docx
+.env
