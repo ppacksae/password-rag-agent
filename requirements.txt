@@ -1,8 +1,7 @@
 streamlit
 google-generativeai
-python-dotenv
-chromadb
 PyPDF2
 python-docx
 sentence-transformers
-pandas
+numpy
+scikit-learn
